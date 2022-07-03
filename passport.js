@@ -16,25 +16,26 @@ const LocalStrategyOption = {
 };
 
 async function LocalVerify(user_id, password, done) {
+    // id 비번 동일여부 파악
     var user;
     try {
-        var sql = "select * from user where user_id = ?";
+        var sql = "select * from user where user_id = ?"; // id 찾아와라
         var params = [user_id];
         await conn.qurey(sql, params, async function (err, rows, fields) {
             if (err) {
                 console.log(err);
-                return done(null, false);
+                return done(null, false); // 에러가 났을 경우
             }
             if (!rows[0]) return done(null, false);
-            user = rows[0];
+            user = rows[0]; // 일치하는 아이디가 없을 경우
 
             console.log(password, user.password);
             const checkPassword = await bcrypt.compare(password, user.password);
             console.log(checkPassword);
-            if (!checkPassword) return done(null, false);
+            if (!checkPassword) return done(null, false); // 패스워드가 일치하지 않을 경우
 
             console.log(user);
-            return done(null, user);
+            return done(null, user); // 모두 일치할 경우 유저데이터를 제공
         });
     } catch (e) {
         return done(e);
@@ -42,7 +43,7 @@ async function LocalVerify(user_id, password, done) {
 }
 
 const JWTStrategyOption = {
-    jwtFormRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    jwtFormRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // 이건 잘 모르겠습니다.
     secretOrKey: "jwt-secert-key",
 };
 
